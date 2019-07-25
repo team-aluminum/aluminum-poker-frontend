@@ -9,6 +9,8 @@
   padding: 0
   box-sizing: border-box
   text-decoration: none
+a, a:visited
+  color: inherit
 #app
   background-color: #2d875a
   height: 100vh

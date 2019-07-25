@@ -11,6 +11,11 @@ export default new Router({
       path: '/',
       name: 'Index',
       component () { return import('@/views/Index.vue') }
+    },
+    {
+      path: '/entrance',
+      name: 'Entrance',
+      component () { return import('@/views/Entrance.vue') }
     }
   ]
 })
