@@ -16,6 +16,11 @@ export default new Router({
       path: '/entrance',
       name: 'Entrance',
       component () { return import('@/views/Entrance.vue') }
+    },
+    {
+      path: '/mobile/entrance',
+      name: 'MobileEntrance',
+      component () { return import('@/views/mobile/Entrance.vue') }
     }
   ]
 })
