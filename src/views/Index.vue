@@ -10,6 +10,12 @@
 </template>
 
 <script>
+export default {
+  created () {
+    localStorage.removeItem('roomCode')
+    localStorage.removeItem('userCode')
+  }
+}
 </script>
 
 <style lang="stylus">

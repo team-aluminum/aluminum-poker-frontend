@@ -12,6 +12,7 @@
 a
   color: inherit
 #app
+  position: relative
   background-color: #2d875a
   height: 100vh
   padding: 50px
