@@ -13,14 +13,14 @@ export default new Router({
       component () { return import('@/views/Index.vue') }
     },
     {
-      path: '/entrance',
-      name: 'Entrance',
-      component () { return import('@/views/Entrance.vue') }
+      path: '/room',
+      name: 'Room',
+      component () { return import('@/views/Room.vue') }
     },
     {
-      path: '/mobile/entrance',
-      name: 'MobileEntrance',
-      component () { return import('@/views/mobile/Entrance.vue') }
+      path: '/mobile/room',
+      name: 'MobileRoom',
+      component () { return import('@/views/mobile/Room.vue') }
     }
   ]
 })

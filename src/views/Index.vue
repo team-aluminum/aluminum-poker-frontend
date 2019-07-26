@@ -2,7 +2,7 @@
 #index
   h1 Aluminum Poker
   p
-    router-link(to='/entrance') Create Room
+    router-link(to='/room') Create Room
   p
     router-link(to='/enter') Enter Room
   p
