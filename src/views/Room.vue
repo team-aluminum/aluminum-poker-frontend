@@ -1,10 +1,13 @@
 <template lang="pug">
-.entrance
-  router-link.entrance__back(to="/") back
-  .entrance__cards(v-if="cards")
-    card.entrance__card(v-for="(card, i) in cards" :key="i" :suit="card.suit" :number="card.number")
-  a.entrance__qrcode(:href="mobileUrl")
-    qrcode(:value="mobileUrl" :options="{ width: 200 }")
+.room
+  router-link.room__back(to="/") Leave Room
+  .room__cards(v-if="cards")
+    card.room__card(v-for="(card, i) in cards" :key="i" :suit="card.suit" :number="card.number")
+  .room__screen
+  .room__qrcode
+    p Read on your phone
+    a(:href="mobileUrl")
+      qrcode(:value="mobileUrl" :options="{ width: 200 }")
 </template>
 
 <script>
@@ -29,7 +32,7 @@ export default {
   },
   computed: {
     mobileUrl () {
-      return `http://0.0.0.0:8080/mobile/entrance?roomCode=${this.roomCode}&userCode=${this.userCode}`
+      return `http://0.0.0.0:8080/mobile/room?roomCode=${this.roomCode}&userCode=${this.userCode}`
     }
   },
   methods: {
@@ -67,12 +70,15 @@ export default {
 </script>
 
 <style lang="stylus">
-.entrance
+.room
   h1
-    color: #ddd
+    color: #eee
   &__back
     color: black
-    background-color: #ddd
+    position: absolute
+    top: 5px
+    left: 5px
+    background-color: #eee
     padding: 5px 10px
     display: inline-block
     margin-bottom: 30px
@@ -83,6 +89,16 @@ export default {
     margin: 0 10px
   &__qrcode
     position: absolute
-    bottom: 50px
-    right: 50px
+    bottom: 0
+    right: 400px
+    p
+      color: #eee
+      font-weight: bold
+  &__screen
+    position: absolute
+    bottom: 0
+    right: 0
+    width: 400px
+    height: 300px
+    background-color: black
 </style>

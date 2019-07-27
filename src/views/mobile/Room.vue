@@ -1,6 +1,6 @@
 <template lang="pug">
-.-mobile.entrance
-  h1 mobile entrance
+.-mobile.room
+  h1 mobile room
 </template>
 
 <script>
@@ -25,7 +25,7 @@ export default {
 </script>
 
 <style lang="stylus">
-.-mobile.entrance
+.-mobile.room
   h1
     color: #ddd
 </style>
