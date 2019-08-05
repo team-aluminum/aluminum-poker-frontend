@@ -20,6 +20,13 @@ export default {
       { user_code: this.userCode }
     ).then(res => {
     })
+  },
+  beforeDestroy () {
+    this.$utils.apiClient(
+      'delete',
+      `http://0.0.0.0:3000/rooms/${this.roomCode}/mobile_user`,
+      { user_code: this.userCode }
+    )
   }
 }
 </script>

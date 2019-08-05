@@ -15,5 +15,11 @@ a
   position: relative
   background-color: #2d875a
   height: 100vh
+  width: 100%
   padding: 50px
+.button
+  &:not(.-disabled)
+    cursor: pointer
+    &:hover
+      opacity: 0.8
 </style>

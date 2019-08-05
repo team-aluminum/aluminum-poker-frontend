@@ -4,9 +4,7 @@
   p
     router-link(to='/room') Create Room
   p
-    router-link(to='/enter') Enter Room
-  p
-    router-link(to="#") Game History
+    router-link(:to="{ name: 'Room', query: { entering: true } }") Enter Room
 </template>
 
 <script>
