@@ -1,18 +1,19 @@
 <template lang="pug">
 .room
-  router-link.room__back(to="/") Leave Room
-  .room__startConsole(v-if="!enteringMode")
-    .room__cards(v-if="cards")
-      card.room__card(v-for="(card, i) in cards" :key="i" :suit="card.suit" :number="card.number")
-    .room__startButton.button(:class="{'-disabled': !startable}")
-      | Start Game
-  .room__enteringConsole(v-else)
-  .room__screen
-  .room__qrcode
-    p(v-if="!mobileUser") Read on your phone
-    p(v-else) Mobile Connected!
-    a(:href="mobileUrl" v-show="!mobileUser")
-      qrcode(:value="mobileUrl" :options="{ width: 200 }")
+  template(v-if="preparing")
+    router-link.room__back(to="/") Leave Room
+    .room__prepareConsole
+      .room__cards(v-if="cards")
+        card.room__card(v-for="(card, i) in cards" :key="i" :suit="card.suit" :number="card.number")
+      .room__startButton.button(v-if="hosting" :class="{'-disabled': !startable}")
+        | Start Game
+    .room__screen
+    .room__qrcode
+      p(v-if="!mobileUser") Read on your phone
+      p(v-else) Mobile Connected!
+      a(:href="mobileUrl" v-show="!mobileUser")
+        qrcode(:value="mobileUrl" :options="{ width: 200 }")
+  template(v-else)
 </template>
 
 <script>
@@ -20,13 +21,13 @@
 export default {
   data () {
     return {
-      roomCode: null,
       userCode: null,
       cards: null,
       user: null,
       mobileUser: null,
       timerId: null,
-      enteringMode: null,
+      hosting: false,
+      preparing: true,
 
       peer: null,
       peerId: null,
@@ -34,22 +35,32 @@ export default {
     }
   },
   created () {
-    this.enteringMode = this.$route.query.entering
-    if (localStorage.roomCode && localStorage.userCode) {
-      this.roomCode = localStorage.roomCode
+    this.hosting = !!this.$route.query.hosting
+    if (localStorage.userCode) {
       this.userCode = localStorage.userCode
-      this.getRoom()
-      this.timerId = setInterval(() => { this.getRoom() }, 2000)
-    } else if (this.enteringMode && localStorage.userCode) {
-    } else if (this.enteringMode) {
-      this.createUser()
+    }
+
+    if (this.userCode) {
+      this.getUserByInterval()
     } else {
-      this.createRoom()
+      if (this.hosting) {
+        this.createRoom().then(res => {
+          this.userCode = res.data.user.code
+          localStorage.userCode = this.userCode
+          this.getUserByInterval()
+        })
+      } else {
+        this.createUser().then(res => {
+          this.userCode = res.data.user.code
+          localStorage.userCode = this.userCode
+          this.getUserByInterval()
+        })
+      }
     }
   },
   computed: {
     mobileUrl () {
-      return `http://0.0.0.0:8080/mobile/room?roomCode=${this.roomCode}&userCode=${this.userCode}`
+      return `http://0.0.0.0:8080/mobile/room?userCode=${this.userCode}`
     },
     startable () {
       return false
@@ -68,34 +79,27 @@ export default {
   },
   methods: {
     createRoom () {
-      this.roomCode = Math.random().toString(36).slice(-8)
-      localStorage.roomCode = this.roomCode
-      this.$utils.apiClient(
+      return this.$utils.apiClient(
         'post',
-        'http://0.0.0.0:3000/rooms',
-        { room_code: this.roomCode }
-      ).then(res => {
-        this.userCode = res.data.user.code
-        localStorage.userCode = this.userCode
-        this.getRoom()
-        this.timerId = setInterval(() => { this.getRoom() }, 2000)
-      })
+        'http://0.0.0.0:3000/rooms'
+      )
     },
     createUser () {
-      this.$utils.apiClient(
+      return this.$utils.apiClient(
         'post',
         'http://0.0.0.0:3000/users'
-      ).then(res => {
-        this.userCode = res.data.user.code
-        localStorage.userCode = this.userCode
-      })
+      )
     },
-    getRoom () {
+    getUserByInterval () {
+      this.getUser()
+      this.timerId = setInterval(() => { this.getUser() }, 2000)
+    },
+    getUser () {
       return this.$utils.apiClient(
         'get',
-        `http://0.0.0.0:3000/rooms/${this.roomCode}?user_code=${this.userCode}`
+        `http://0.0.0.0:3000/users/${this.userCode}`
       ).then(res => {
-        if (!this.cards) {
+        if (this.hosting && !this.cards) {
           this.cards = res.data.room.keys.split(',').map(key => {
             return { suit: key.slice(0, 1), number: key.slice(1, 3) }
           })
@@ -136,7 +140,7 @@ export default {
     display: inline-block
     margin-bottom: 30px
     border-radius: 3px
-  &__startConsole, &__enteringConsole
+  &__prepareConsole
     position: absolute
     width: 400px
     height: 300px
@@ -162,13 +166,6 @@ export default {
     margin-bottom: 20px
   &__card
     margin: 0 10px
-  &__qrcode
-    position: absolute
-    bottom: 0
-    right: 400px
-    p
-      color: #eee
-      font-weight: bold
   &__screen
     position: absolute
     bottom: 0
@@ -176,4 +173,11 @@ export default {
     width: 400px
     height: 300px
     background-color: black
+  &__qrcode
+    position: absolute
+    bottom: 0
+    right: 400px
+    p
+      color: #eee
+      font-weight: bold
 </style>

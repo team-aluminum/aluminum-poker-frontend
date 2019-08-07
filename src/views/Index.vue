@@ -2,9 +2,9 @@
 #index
   h1 Aluminum Poker
   p
-    router-link(to='/room') Create Room
+    router-link(:to="{ name: 'Room', query: { hosting: true } }") Create Room
   p
-    router-link(:to="{ name: 'Room', query: { entering: true } }") Enter Room
+    router-link(to="/room") Enter Room
 </template>
 
 <script>
