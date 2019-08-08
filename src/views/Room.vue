@@ -94,7 +94,7 @@ export default {
     },
     getUserByInterval () {
       this.getUser()
-      this.timerId = setInterval(() => { this.getUser() }, 2000)
+      this.timerId = setInterval(() => { this.getUser() }, 10000)
     },
     getUser () {
       return this.$utils.apiClient(
@@ -102,7 +102,7 @@ export default {
         `/users/${this.userCode}`
       ).then(res => {
         this.hosting = res.data.hosting
-        if (this.hosting && !this.cards) {
+        if (!this.cards) {
           this.cards = res.data.keys.split(',').map(key => {
             return { suit: key.slice(0, 1), number: key.slice(1, 3) }
           })

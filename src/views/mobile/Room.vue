@@ -4,7 +4,7 @@
     option(v-for="suit in suits") {{ suit }}
   select(v-model="selecting.number")
     option(v-for="number in numbers") {{ number }}
-  button(@click)
+  button(@click="submit") 送信
 </template>
 
 <script>
@@ -14,7 +14,7 @@ export default {
       userCode: null,
 
       suits: ['spade', 'heart', 'diamond', 'club'],
-      numbers: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
+      numbers: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'],
       selecting: {
         suit: null,
         number: null
@@ -37,8 +37,13 @@ export default {
       }
       this.$utils.apiClient(
         'post',
-        '/rooms'
-      )
+        '/mobile_events/read_card',
+        { suit: this.selecting.suit, number: this.selecting.number, user_code: this.userCode }
+      ).then(res => {
+        this.selecting.suit = null
+        this.selecting.number = null
+        console.log(res.data)
+      })
     }
   }
 }
