@@ -83,13 +83,13 @@ export default {
     createRoom () {
       return this.$utils.apiClient(
         'post',
-        'http://0.0.0.0:3000/rooms'
+        '/rooms'
       )
     },
     createUser () {
       return this.$utils.apiClient(
         'post',
-        'http://0.0.0.0:3000/users'
+        '/users'
       )
     },
     getUserByInterval () {
@@ -99,7 +99,7 @@ export default {
     getUser () {
       return this.$utils.apiClient(
         'get',
-        `http://0.0.0.0:3000/users/${this.userCode}`
+        `/users/${this.userCode}`
       ).then(res => {
         this.hosting = res.data.hosting
         if (this.hosting && !this.cards) {

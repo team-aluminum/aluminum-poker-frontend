@@ -25,7 +25,7 @@ export default {
     this.userCode = this.$route.query.userCode
     this.$utils.apiClient(
       'post',
-      'http://0.0.0.0:3000/mobile_events/mobile_user',
+      '/mobile_events/mobile_user',
       { user_code: this.userCode }
     )
   },
@@ -37,7 +37,7 @@ export default {
       }
       this.$utils.apiClient(
         'post',
-        'http://0.0.0.0:3000/rooms'
+        '/rooms'
       )
     }
   }
