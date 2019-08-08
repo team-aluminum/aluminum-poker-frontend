@@ -64,7 +64,7 @@ export default {
   },
   computed: {
     mobileUrl () {
-      return `http://0.0.0.0:8080/mobile/room?userCode=${this.userCode}`
+      return `${process.env.VUE_APP_FRONTEND_ENDPOINT}/mobile/room?userCode=${this.userCode}`
     },
     startable () {
       return !!(this.mobileUser && this.oppositeUser)
