@@ -7,7 +7,8 @@
         card.room__card(v-for="(card, i) in cards" :key="i" :suit="card.suit" :number="card.number")
       .room__startButton.button(v-if="hosting" :class="{'-disabled': !startable}")
         | Start Game
-    .room__screen
+    video#my-video.room__screen(width="400" autoplay playsinline)
+    video#their-video.room__screenOpposite(width="400" autoplay playsinline )
     .room__qrcode
       p(v-if="!mobileUser") Read on your phone
       p(v-else) Mobile Connected!
@@ -17,12 +18,12 @@
 </template>
 
 <script>
-// import Peer from 'skyway-js'
+import Peer from 'skyway-js'
 export default {
   data () {
     return {
       userCode: null,
-      users: [],
+      oppositeUser: null,
       mobileUser: null,
       hosting: false,
       preparing: true,
@@ -32,7 +33,8 @@ export default {
 
       peer: null,
       peerId: null,
-      localStream: null
+      localStream: null,
+      connecting: false
     }
   },
   created () {
@@ -65,19 +67,22 @@ export default {
       return `http://0.0.0.0:8080/mobile/room?userCode=${this.userCode}`
     },
     startable () {
-      return false
+      return !!(this.mobileUser && this.oppositeUser)
     }
   },
-  mounted () {
-    // this.peer = new Peer({ key: '0b7346a4-fe23-49c0-9423-0097e00c5e73', debug: 3 })
-    // this.peer.on('open', () => {
-    //   this.peerId = this.peer.id
-    // })
-    //
-    // this.peer.on('call', call => {
-    //   call.answer(this.localStream)
-    //   this.connect(call)
-    // })
+  async mounted () {
+    this.peer = new Peer({ key: process.env.VUE_APP_SKYWAY_API_KEY, debug: 3 })
+    this.peer.on('open', () => {
+      this.peerId = this.peer.id
+      this.setPeerId()
+    })
+    this.peer.on('call', call => {
+      call.answer(this.localStream)
+      this.connect(call)
+    })
+    const deviseInfo = await navigator.mediaDevices.enumerateDevices()
+    const camera = deviseInfo.find(devise => devise.kind === 'videoinput')
+    this.connectLocalCamera(camera)
   },
   methods: {
     createRoom () {
@@ -102,7 +107,7 @@ export default {
         `/users/${this.userCode}`
       ).then(res => {
         this.hosting = res.data.hosting
-        if (!this.cards) {
+        if (!this.cards && res.data.keys) {
           this.cards = res.data.keys.split(',').map(key => {
             return { suit: key.slice(0, 1), number: key.slice(1, 3) }
           })
@@ -110,16 +115,43 @@ export default {
         if (!this.mobileUser) {
           this.mobileUser = res.data.mobile_user
         }
-        this.users = res.data.users
+        this.oppositeUser = res.data.opposite_user
+        if (this.oppositeUser && !this.connecting) {
+          this.connecting = true
+          setTimeout(() => { this.makeCall() }, 1000)
+        }
       })
+    },
+    setPeerId () {
+      if (!this.peerId) {
+        return
+      }
+      this.$utils.apiClient(
+        'patch',
+        `/users/${this.userCode}`,
+        { peer_id: this.peerId }
+      )
+    },
+    connect (call) {
+      call.on('stream', stream => {
+        const el = document.getElementById('their-video')
+        el.srcObject = stream
+        el.play()
+      })
+    },
+    async connectLocalCamera (camera) {
+      const constraints = {
+        video: { text: camera.label, value: camera.deviceId },
+        audio: false
+      }
+      const stream = await navigator.mediaDevices.getUserMedia(constraints)
+      document.getElementById('my-video').srcObject = stream
+      this.localStream = stream
+    },
+    makeCall () {
+      const call = this.peer.call(this.oppositeUser.peer_id, this.localStream)
+      this.connect(call)
     }
-    // connect (call) {
-    //   call.on('stream', stream => {
-    //     const el = document.getElementById('their-video')
-    //     el.srcObject = stream
-    //     el.play()
-    //   })
-    // }
   },
   beforeDestroy () {
     clearInterval(this.timerId)
@@ -145,12 +177,10 @@ export default {
     position: absolute
     width: 400px
     height: 300px
-    top: 0
+    top: 100px
     left: 0
     right: 0
-    bottom: 0
     margin: auto
-    background-color: gray
   &__startButton
     width: 80%
     border-radius: 50px
@@ -171,9 +201,15 @@ export default {
     position: absolute
     bottom: 0
     right: 0
-    width: 400px
     height: 300px
     background-color: black
+    &Opposite
+      position: absolute
+      bottom: 0
+      left: 0
+      height: 300px
+      margin: auto
+      background-color: black
   &__qrcode
     position: absolute
     bottom: 0
