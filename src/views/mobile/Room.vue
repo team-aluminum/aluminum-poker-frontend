@@ -1,32 +1,45 @@
 <template lang="pug">
 .-mobile.room
-  h1 mobile room
+  select(v-model="selecting.suit")
+    option(v-for="suit in suits") {{ suit }}
+  select(v-model="selecting.number")
+    option(v-for="number in numbers") {{ number }}
+  button(@click)
 </template>
 
 <script>
 export default {
   data () {
     return {
-      roomCode: null,
-      userCode: null
+      userCode: null,
+
+      suits: ['spade', 'heart', 'diamond', 'club'],
+      numbers: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
+      selecting: {
+        suit: null,
+        number: null
+      }
     }
   },
   created () {
-    this.roomCode = this.$route.query.roomCode
     this.userCode = this.$route.query.userCode
     this.$utils.apiClient(
       'post',
-      `http://0.0.0.0:3000/rooms/${this.roomCode}/mobile_user`,
-      { user_code: this.userCode }
-    ).then(res => {
-    })
-  },
-  beforeDestroy () {
-    this.$utils.apiClient(
-      'delete',
-      `http://0.0.0.0:3000/rooms/${this.roomCode}/mobile_user`,
+      'http://0.0.0.0:3000/mobile_events/mobile_user',
       { user_code: this.userCode }
     )
+  },
+  methods: {
+    submit () {
+      if (!(this.selecting.suit && this.selecting.number)) {
+        alert('選択必須')
+        return
+      }
+      this.$utils.apiClient(
+        'post',
+        'http://0.0.0.0:3000/rooms'
+      )
+    }
   }
 }
 </script>

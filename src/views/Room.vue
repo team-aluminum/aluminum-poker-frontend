@@ -22,12 +22,13 @@ export default {
   data () {
     return {
       userCode: null,
-      cards: null,
-      user: null,
+      users: [],
       mobileUser: null,
-      timerId: null,
       hosting: false,
       preparing: true,
+
+      cards: null,
+      timerId: null,
 
       peer: null,
       peerId: null,
@@ -41,6 +42,7 @@ export default {
     }
 
     if (this.userCode) {
+      this.$router.push('/room')
       this.getUserByInterval()
     } else {
       if (this.hosting) {
@@ -99,17 +101,16 @@ export default {
         'get',
         `http://0.0.0.0:3000/users/${this.userCode}`
       ).then(res => {
+        this.hosting = res.data.hosting
         if (this.hosting && !this.cards) {
-          this.cards = res.data.room.keys.split(',').map(key => {
+          this.cards = res.data.keys.split(',').map(key => {
             return { suit: key.slice(0, 1), number: key.slice(1, 3) }
           })
-        }
-        if (!this.user) {
-          this.user = res.data.user
         }
         if (!this.mobileUser) {
           this.mobileUser = res.data.mobile_user
         }
+        this.users = res.data.users
       })
     }
     // connect (call) {

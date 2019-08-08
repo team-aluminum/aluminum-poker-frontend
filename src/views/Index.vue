@@ -10,7 +10,6 @@
 <script>
 export default {
   created () {
-    localStorage.removeItem('roomCode')
     localStorage.removeItem('userCode')
   }
 }
