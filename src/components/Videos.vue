@@ -1,7 +1,8 @@
 <template lang="pug">
 .videos
   video#my-video.videos__screen(width="400" autoplay playsinline)
-  video#their-video.videos__screenOpposite(width="400" autoplay playsinline )
+  video#opposite-video.videos__screenOpposite(width="400" autoplay playsinline
+    :class="{'-exist': oppositeUser}")
 </template>
 
 <script>
@@ -47,7 +48,7 @@ export default {
     },
     connect (call) {
       call.on('stream', stream => {
-        const el = document.getElementById('their-video')
+        const el = document.getElementById('opposite-video')
         el.srcObject = stream
         el.play()
       })
@@ -92,4 +93,6 @@ export default {
       height: 300px
       margin: auto
       background-color: black
+      &.-exist
+        background: gray
 </style>

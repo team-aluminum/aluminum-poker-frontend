@@ -1,11 +1,11 @@
 <template lang="pug">
 .room
   videos(:oppositeUser="oppositeUser" :userCode="userCode")
-  template(v-if="preparing")
+  template(v-if="status === 'preparing'")
     router-link.room__back(to="/") Leave Room
     .room__prepareConsole
-      .room__cards(v-if="cards")
-        card.room__card(v-for="(card, i) in cards" :key="i" :suit="card.suit" :number="card.number")
+      .room__cardKeys(v-if="card_keys")
+        card.room__card(v-for="(card, i) in card_keys" :key="i" :suit="card.suit" :number="card.number")
       .room__startButton.button(v-if="hosting" :class="{'-disabled': !startable}" @click="setup")
         | Start Game
     .room__qrcode
@@ -14,21 +14,25 @@
       a(:href="mobileUrl" v-show="!mobileUser")
         qrcode(:value="mobileUrl" :options="{ width: 200 }")
   template(v-else)
+    user-status.room__user.-opposite(:user="oppositeUser")
+    user-status.room__user.-me(:user="oppositeUser")
 </template>
 
 <script>
 import Videos from '@/components/Videos'
+import UserStatus from '@/components/UserStatus'
 export default {
-  components: { Videos },
+  components: { Videos, UserStatus },
   data () {
     return {
       userCode: null,
       oppositeUser: null,
+      user: null,
       mobileUser: null,
       hosting: false,
-      preparing: true,
+      status: null,
 
-      cards: null,
+      card_keys: null,
       timerId: null
     }
   },
@@ -87,24 +91,33 @@ export default {
         'get',
         `/users/${this.userCode}`
       ).then(res => {
-        this.hosting = res.data.hosting
-        if (!this.cards && res.data.keys) {
-          this.cards = res.data.keys.split(',').map(key => {
-            return { suit: key.slice(0, 1), number: key.slice(1, 3) }
-          })
+        this.status = res.data.status
+        if (this.status === 'preparing') {
+          this.hosting = res.data.hosting
+          if (!this.card_keys && res.data.keys) {
+            this.card_keys = res.data.keys.split(',').map(key => {
+              return { suit: key.slice(0, 1), number: key.slice(1, 3) }
+            })
+          }
         }
         if (!this.mobileUser) {
           this.mobileUser = res.data.mobile_user
         }
         this.oppositeUser = res.data.opposite_user
+        this.user = res.data.user
       })
     },
     setup () {
+      if (!this.startable) {
+        return
+      }
       this.$utils.apiClient(
         'post',
-        '/room/setup',
+        '/rooms/setup',
         { user_code: this.userCode }
-      )
+      ).then(_ => {
+        this.getUser()
+      })
     }
   },
   beforeDestroy () {
@@ -114,7 +127,11 @@ export default {
 </script>
 
 <style lang="stylus">
+#app
+  padding: 0
 .room
+  position: relative
+  height: 100%
   h1
     color: #eee
   &__back
@@ -145,7 +162,7 @@ export default {
     margin: auto
     &.-disabled
       background-color: #aaa
-  &__cards
+  &__cardKeys
     display: flex
     justify-content: center
     margin-bottom: 20px
@@ -158,4 +175,11 @@ export default {
     p
       color: #eee
       font-weight: bold
+  &__user
+    bottom: 300px
+    position: absolute
+    .-opposite
+      left: 0
+    .-me
+      right: 0
 </style>
