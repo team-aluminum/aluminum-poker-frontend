@@ -13,6 +13,11 @@ export default new Router({
       component () { return import('@/views/Index.vue') }
     },
     {
+      path: '/qrcodes',
+      name: 'Qrcodes',
+      component () { return import('@/views/Qrcodes.vue') }
+    },
+    {
       path: '/room',
       name: 'Room',
       component () { return import('@/views/Room.vue') }

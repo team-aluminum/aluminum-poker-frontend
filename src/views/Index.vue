@@ -5,6 +5,8 @@
     router-link(:to="{ name: 'Room', query: { hosting: true } }") Create Room
   p
     router-link(to="/room") Enter Room
+  p
+    router-link(to="/qrcodes") QR codes
 </template>
 
 <script>

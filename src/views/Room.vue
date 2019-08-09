@@ -1,13 +1,13 @@
 <template lang="pug">
 .room
+  videos(:oppositeUser="oppositeUser" :userCode="userCode")
   template(v-if="preparing")
     router-link.room__back(to="/") Leave Room
     .room__prepareConsole
       .room__cards(v-if="cards")
         card.room__card(v-for="(card, i) in cards" :key="i" :suit="card.suit" :number="card.number")
-      .room__startButton.button(v-if="hosting" :class="{'-disabled': !startable}")
+      .room__startButton.button(v-if="hosting" :class="{'-disabled': !startable}" @click="setup")
         | Start Game
-    videos(:oppositeUser="oppositeUser" :userCode="userCode")
     .room__qrcode
       p(v-if="!mobileUser") Read on your phone
       p(v-else) Mobile Connected!
@@ -99,6 +99,13 @@ export default {
         this.oppositeUser = res.data.opposite_user
       })
     },
+    setup () {
+      this.$utils.apiClient(
+        'post',
+        '/room/setup',
+        { user_code: this.userCode }
+      )
+    }
   },
   beforeDestroy () {
     clearInterval(this.timerId)
