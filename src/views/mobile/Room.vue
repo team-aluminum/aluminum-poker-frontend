@@ -35,14 +35,14 @@ export default {
         alert('選択必須')
         return
       }
+      const card = this.selecting.suit.slice(0, 1) + this.selecting.number
       this.$utils.apiClient(
         'post',
         '/mobile_events/read_card',
-        { suit: this.selecting.suit, number: this.selecting.number, user_code: this.userCode }
+        { card, user_code: this.userCode }
       ).then(res => {
         this.selecting.suit = null
         this.selecting.number = null
-        console.log(res.data)
       })
     }
   }

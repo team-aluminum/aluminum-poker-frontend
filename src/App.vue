@@ -16,7 +16,6 @@ a
   background-color: #2d875a
   height: 100vh
   width: 100%
-  padding: 50px
 .button
   &:not(.-disabled)
     cursor: pointer

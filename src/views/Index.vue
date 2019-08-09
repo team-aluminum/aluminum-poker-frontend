@@ -1,5 +1,5 @@
 <template lang="pug">
-#index
+.index
   h1 Aluminum Poker
   p
     router-link(:to="{ name: 'Room', query: { hosting: true } }") Create Room
@@ -18,9 +18,10 @@ export default {
 </script>
 
 <style lang="stylus">
-#index
+.index
   color: #ddd
   text-align: center
+  padding: 50px
   h1
     font-size: 64px
     margin-bottom: 50px

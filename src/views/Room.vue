@@ -14,8 +14,8 @@
       a(:href="mobileUrl" v-show="!mobileUser")
         qrcode(:value="mobileUrl" :options="{ width: 200 }")
   template(v-else)
-    user-status.room__user.-opposite(:user="oppositeUser")
-    user-status.room__user.-me(:user="oppositeUser")
+    user-status.room__user.-opposite(:user="oppositeUser" side="left")
+    user-status.room__user.-me(:user="oppositeUser" side="right")
 </template>
 
 <script>
@@ -63,7 +63,6 @@ export default {
   },
   computed: {
     mobileUrl () {
-      console.log(process.env)
       if (process.env.NODE_ENV === 'development') {
         return `${process.env.VUE_APP_FRONTEND_ENDPOINT}/mobile/room?userCode=${this.userCode}`
       } else {
@@ -187,8 +186,8 @@ export default {
   &__user
     bottom: 300px
     position: absolute
-    .-opposite
+    &.-opposite
       left: 0
-    .-me
+    &.-me
       right: 0
 </style>
