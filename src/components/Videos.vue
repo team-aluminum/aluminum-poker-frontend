@@ -1,14 +1,15 @@
 <template lang="pug">
 .videos
-  video#my-video.videos__screen(width="400" autoplay playsinline)
+  video#my-video.videos__screen(width="400" autoplay playsinline
+    :class="{'-active': user && user.active}")
   video#opposite-video.videos__screenOpposite(width="400" autoplay playsinline
-    :class="{'-exist': oppositeUser}")
+    :class="{'-exist': oppositeUser, '-active': oppositeUser && oppositeUser.active}")
 </template>
 
 <script>
 import Peer from 'skyway-js'
 export default {
-  props: ['oppositeUser', 'userCode'],
+  props: ['user', 'oppositeUser', 'userCode'],
   data () {
     return {
       availableVideo: false,
@@ -95,4 +96,6 @@ export default {
       background-color: black
       &.-exist
         background: gray
+  .-active
+    border: 2px solid red
 </style>

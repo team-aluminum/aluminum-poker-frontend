@@ -1,12 +1,14 @@
 <template lang="pug">
-.card(:style="colorStyle")
+.card(v-if="!back" :style="[colorStyle, sizeStyle]")
   .card__number {{ displayNumber }}
   .card__suit {{ displaySuit }}
+.card(v-else :style="[colorStyle, sizeStyle]")
+  img.card__backImage(:src="require('@/assets/card.png')")
 </template>
 
 <script>
 export default {
-  props: ['suit', 'number', 'size'],
+  props: ['suit', 'number', 'size', 'back'],
   data () {
     return {
     }
@@ -30,6 +32,12 @@ export default {
       } else {
         return {}
       }
+    },
+    sizeStyle () {
+      if (!this.size) {
+        return {}
+      }
+      return { width: `${this.size}px`, height: `${this.size * 1.6}px` }
     }
   }
 }
@@ -39,9 +47,9 @@ export default {
 .card
   background-color: #eee
   position: relative
-  border-radius: 5px
-  width: 150px
-  height: calc(150px * 1.6)
+  border-radius: 7px
+  width: 160px
+  height: calc(160px * 1.6)
   &__number
     position: absolute
     top: 10px
@@ -50,4 +58,8 @@ export default {
     position: absolute
     top: 30px
     left: 10px
+  &__back
+    &Image
+      width: 100%
+      height: 100%
 </style>

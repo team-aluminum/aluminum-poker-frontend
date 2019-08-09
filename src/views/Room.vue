@@ -1,6 +1,6 @@
 <template lang="pug">
 .room
-  videos(:oppositeUser="oppositeUser" :userCode="userCode")
+  videos(:user="user" :oppositeUser="oppositeUser" :userCode="userCode")
   template(v-if="status === 'preparing'")
     router-link.room__back(to="/") Leave Room
     .room__prepareConsole
@@ -15,7 +15,7 @@
         qrcode(:value="mobileUrl" :options="{ width: 200 }")
   template(v-else)
     user-status.room__user.-opposite(:user="oppositeUser" side="left")
-    user-status.room__user.-me(:user="oppositeUser" side="right")
+    user-status.room__user.-me(:user="user" side="right")
 </template>
 
 <script>
