@@ -11,8 +11,12 @@
           img(:src="require('@/assets/coin-red.png')" v-for="i in one_chip_count" :key="i")
       .user__chips ${{ user.chips }}
     .user__row
-      .user__cards
-        card(:back="true" :size="120" v-for="i in user.card_count" :key="i")
+      .user__result(:class="user.result" v-if="status === 'result'") {{ user.result }}
+      .user__cards(v-if="status === 'result' && !fold")
+        card.-card(v-for="c in user.cards" :suit="c.suit" :number="c.number"
+          :size="100" :key="c.id")
+      .user__cards(v-else)
+        card.-card(:back="true" :size="100" v-for="i in user.card_count" :key="i")
     .user__row(:class="{'-hidden': !user.button}")
       .user__button B
 
@@ -29,7 +33,7 @@
 
 <script>
 export default {
-  props: ['user', 'side'],
+  props: ['user', 'side', 'status', 'fold'],
   computed: {
     ten_chip_count () {
       return parseInt(this.user.chips / 10)
@@ -81,6 +85,19 @@ export default {
   &__cards
     display: flex
     margin: 0 25px 30px
+    .-card
+      margin: 0 5px
+  &__result
+    text-align: center
+    font-size: 48px
+    padding-bottom: 10px
+    font-weight: bold
+    &.draw
+      color: black
+    &.lose
+      color: blue
+    &.win
+      color: red
   &__button
     background-color: #333
     color: white

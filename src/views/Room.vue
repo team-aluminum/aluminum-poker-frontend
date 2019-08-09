@@ -14,8 +14,21 @@
       a(:href="mobileUrl" v-show="!mobileUser")
         qrcode(:value="mobileUrl" :options="{ width: 200 }")
   template(v-else)
-    user-status.room__user.-opposite(:user="oppositeUser" side="left")
-    user-status.room__user.-me(:user="user" side="right")
+    user-status.room__user.-opposite(:user="oppositeUser" side="left" :status="status" :fold="fold")
+    user-status.room__user.-me(:user="user" side="right" :status="status" :fold="fold")
+    .room__comunity
+      .room__pod(v-if="room") ${{ room.pod_chips }}
+      .room__comunityCards(v-if="comunityCards.flop.length > 0")
+        card.room__comunityCard(v-for="card in comunityCards.flop" :key="card.id"
+          :suit="card.suit" :number="card.number" :size="100")
+        template
+          card.room__comunityCard(v-if="comunityCards.turn" :size="100"
+            :suit="comunityCards.turn.suit" :number="comunityCards.turn.number")
+          card.room__comunityCard(v-else :back="true" :size="100")
+        template
+          card.room__comunityCard(v-if="comunityCards.river" :size="100"
+            :suit="comunityCards.river.suit" :number="comunityCards.river.number")
+          card.room__comunityCard(v-else :back="true" :size="100")
 </template>
 
 <script>
@@ -31,6 +44,12 @@ export default {
       mobileUser: null,
       hosting: false,
       status: null,
+      comunityCards: {
+        flop: [],
+        turn: null,
+        river: null
+      },
+      room: null,
 
       card_keys: null,
       timerId: null
@@ -75,6 +94,9 @@ export default {
     },
     startable () {
       return !!(this.mobileUser && this.oppositeUser)
+    },
+    fold () {
+      return (this.user && this.user.result === 'fold') || (this.oppositeUser && this.oppositeUser.result === 'fold')
     }
   },
   methods: {
@@ -92,7 +114,7 @@ export default {
     },
     getUserByInterval () {
       this.getUser()
-      this.timerId = setInterval(() => { this.getUser() }, 10000)
+      this.timerId = setInterval(() => { this.getUser() }, 100000)
     },
     getUser () {
       return this.$utils.apiClient(
@@ -113,6 +135,8 @@ export default {
         }
         this.oppositeUser = res.data.opposite_user
         this.user = res.data.user
+        this.room = res.data.room
+        this.comunityCards = res.data.cards
       })
     },
     setup () {
@@ -190,4 +214,16 @@ export default {
       left: 0
     &.-me
       right: 0
+  &__pod
+    text-align: center
+    color: white
+    font-size: 32px
+    font-weight: bold
+  &__comunity
+    width: 550px
+    padding-top: 50px
+    margin: auto
+    &Cards
+      display: flex
+      justify-content: space-between
 </style>

@@ -13,6 +13,8 @@
     button(@click="action('fold')") fold
     button(@click="action('raise')") raise
     input(v-model="raiseAmount")
+    p min: {{ minRaiseAmount }}
+    p max: {{ maxRaiseAmount }}
 </template>
 
 <script>
@@ -66,7 +68,7 @@ export default {
       this.getStatus()
       this.timerId = setInterval(() => {
         this.getStatus()
-      }, 10000)
+      }, 100000)
     },
     getStatus () {
       this.$utils.apiClient(
