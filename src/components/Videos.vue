@@ -12,7 +12,7 @@ export default {
   props: ['user', 'oppositeUser', 'userCode'],
   data () {
     return {
-      availableVideo: false,
+      availableVideo: true,
       peer: null,
       peerId: null,
       localStream: null,
