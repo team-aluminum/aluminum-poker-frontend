@@ -63,7 +63,16 @@ export default {
   },
   computed: {
     mobileUrl () {
-      return `${process.env.VUE_APP_FRONTEND_ENDPOINT}/mobile/room?userCode=${this.userCode}`
+      console.log(process.env)
+      if (process.env.NODE_ENV === 'development') {
+        return `${process.env.VUE_APP_FRONTEND_ENDPOINT}/mobile/room?userCode=${this.userCode}`
+      } else {
+        if (this.hosting) {
+          return `alpoker://entry?userCode=${this.userCode}&hosting=true`
+        } else {
+          return `alpoker://entry?userCode=${this.userCode}`
+        }
+      }
     },
     startable () {
       return !!(this.mobileUser && this.oppositeUser)
