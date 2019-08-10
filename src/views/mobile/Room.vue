@@ -11,7 +11,7 @@
     .button(v-if="limpLabel === 'check'" @click="action('check')")
       img(:src="require('@/assets/coin-red.png')")
       p check
-    .button(v-if="limpLabel === 'call'" @click="action('call')") 
+    .button(v-if="limpLabel === 'call'" @click="action('call')")
       img(:src="require('@/assets/coin-red.png')")
       p ${{ callAmount }} to call
     .button(@click="action('fold')")
@@ -71,7 +71,7 @@ export default {
           return `alpoker://entry?userCode=${this.userCode}`
         }
       }
-    },
+    }
   },
   methods: {
     submit () {

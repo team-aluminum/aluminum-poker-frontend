@@ -11,7 +11,7 @@
         td(v-for="suit in suits" @click.stop)
           div(:class="{'-hidden': isHidden(suit, number)}")
             p {{ evaluate(suit, number) }}
-            qrcode.qrcode(:value="evaluate(suit, number)" :options="{ width: 100 }" @click.native="focus(suit, number)")
+            qrcode.qrcode(:value="evaluate(suit, number)" :options="{ width: 150 }" @click.native="focus(suit, number)")
 </template>
 
 <script>

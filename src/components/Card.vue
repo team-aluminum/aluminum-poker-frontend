@@ -18,9 +18,9 @@ export default {
       return { s: '♠', h: '♥', d: '♦', c: '♣' }[this.suit]
     },
     displayNumber () {
-      if (['1', '11', '12', '13'].includes(this.number)) {
+      if (['1', '11', '12', '13'].includes(`${this.number}`)) {
         const numberToStringMap = { '1': 'A', '11': 'J', '12': 'Q', '13': 'K' }
-        return numberToStringMap[this.number]
+        return numberToStringMap[`${this.number}`]
       }
       return this.number
     },
