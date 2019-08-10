@@ -26,6 +26,7 @@
     .notes
       span min: {{ minRaiseAmount }},
       span max: {{ maxRaiseAmount }}
+  qrcode(:value="mobileUrl" :options="{ width: 200 }")
 </template>
 
 <script>
@@ -58,6 +59,19 @@ export default {
       { user_code: this.userCode }
     )
     this.getStatusByInterval()
+  },
+  computed: {
+    mobileUrl () {
+      if (process.env.NODE_ENV === 'development') {
+        return `${process.env.VUE_APP_FRONTEND_ENDPOINT}/mobile/room?userCode=${this.userCode}`
+      } else {
+        if (this.hosting) {
+          return `alpoker://entry?userCode=${this.userCode}&hosting=true`
+        } else {
+          return `alpoker://entry?userCode=${this.userCode}`
+        }
+      }
+    },
   },
   methods: {
     submit () {
