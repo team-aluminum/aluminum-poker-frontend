@@ -114,7 +114,7 @@ export default {
     },
     getUserByInterval () {
       this.getUser()
-      this.timerId = setInterval(() => { this.getUser() }, 100000)
+      this.timerId = setInterval(() => { this.getUser() }, 500)
     },
     getUser () {
       return this.$utils.apiClient(
